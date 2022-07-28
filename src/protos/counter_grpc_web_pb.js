@@ -217,15 +217,13 @@ const methodDescriptor_Counter_Set = new grpc.web.MethodDescriptor(
 /**
  * @param {!proto.count.CounterRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.count.Empty)}
  *     callback The callback function(error, response)
  * @return {!grpc.web.ClientReadableStream<!proto.count.Empty>|undefined}
  *     The XHR Node Readable Stream
  */
 proto.count.CounterClient.prototype.set =
-    function(request, metadata, callback) {
+    function (request) {
   return this.client_.rpcCall(this.hostname_ +
       '/count.Counter/Set',
       request,

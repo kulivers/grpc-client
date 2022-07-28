@@ -1,52 +1,48 @@
-import logo from './logo.svg';
 import './App.css';
 import {useEffect} from 'react';
-import CounterClient from './protos/counter_grpc_web_pb'
-import counter_pb from './protos/counter_pb'
+import {CounterReply, CounterRequest, Empty} from './protos/counter_pb'
+import {UnaryCounter} from './Components/UnaryCounter';
+import CounterClient from './protos/counter_grpc_web_pb';
 
-const CounterReply = counter_pb.CounterReply
-const CounterRequest = counter_pb.CounterRequest
-const CounterEmpty = counter_pb.Empty
 
+const serverCounterStream = () => {
+
+}
+
+
+const SetCounterComp = () => {
+
+}
 
 function App() {
-    useEffect(() => {
-    }, [])
     const handleClick = async () => {
         const counterClient = new CounterClient.CounterClient('https://localhost:7064', null, null);
-        const reply = new CounterReply()
-        const empty = new CounterEmpty()
-        const request = new CounterRequest();
+        let stream = counterClient.countdown(new Empty(), {})
+        stream.on('data', function (response) {
+            console.log(response);
+        });
+        stream.on('status', function (status) {
+            console.log(status.code);
+            console.log(status.details);
+            console.log(status.metadata);
+        });
+        stream.on('end', function (end) {
+            // stream end signal
+        });
 
-
-        console.log('request', request)
-        console.log('counterClient', counterClient)
-
-        counterClient.getCounter(empty, {'custom-header-1': 'value1'},
-            (err, response) => {
-                console.log('err', err)
-                console.log('response', response)
-            })
-
+        // to close the stream
+        stream.cancel()
 
     }
+
+    useEffect(() => {
+        SetCounterComp();
+    }, [])
+
     return (
         <div className="App">
-            <button onClick={handleClick}>papapa</button>
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo"/>
-                <p>
-                    Edit <code>src/App.js</code> and save to reload.
-                </p>
-                <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Learn React
-                </a>
-            </header>
+            <button onClick={handleClick}>make stream request</button>
+            <UnaryCounter/>
         </div>
     );
 }
