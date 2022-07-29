@@ -198,8 +198,8 @@ proto.count.CounterPromiseClient.prototype.increment =
  *   !proto.count.CounterRequest,
  *   !proto.count.Empty>}
  */
-const methodDescriptor_Counter_Set = new grpc.web.MethodDescriptor(
-  '/count.Counter/Set',
+const methodDescriptor_Counter_SetCounter = new grpc.web.MethodDescriptor(
+  '/count.Counter/SetCounter',
   grpc.web.MethodType.UNARY,
   proto.count.CounterRequest,
   proto.count.Empty,
@@ -217,18 +217,20 @@ const methodDescriptor_Counter_Set = new grpc.web.MethodDescriptor(
 /**
  * @param {!proto.count.CounterRequest} request The
  *     request proto
+ * @param {?Object<string, string>} metadata User defined
  *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.count.Empty)}
  *     callback The callback function(error, response)
  * @return {!grpc.web.ClientReadableStream<!proto.count.Empty>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.count.CounterClient.prototype.set =
-    function (request) {
+proto.count.CounterClient.prototype.setCounter =
+    function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/count.Counter/Set',
+      '/count.Counter/SetCounter',
       request,
       metadata || {},
-      methodDescriptor_Counter_Set,
+      methodDescriptor_Counter_SetCounter,
       callback);
 };
 
@@ -241,13 +243,13 @@ proto.count.CounterClient.prototype.set =
  * @return {!Promise<!proto.count.Empty>}
  *     Promise that resolves to the response
  */
-proto.count.CounterPromiseClient.prototype.set =
+proto.count.CounterPromiseClient.prototype.setCounter =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/count.Counter/Set',
+      '/count.Counter/SetCounter',
       request,
       metadata || {},
-      methodDescriptor_Counter_Set);
+      methodDescriptor_Counter_SetCounter);
 };
 
 

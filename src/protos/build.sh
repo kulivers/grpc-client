@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PROTO_DIR=.
+OUT_DIR=.
 
 # Generate JavaScript code - INDUS CODE
 #npm run grpc_tools_node_protoc \
@@ -12,6 +13,13 @@ PROTO_DIR=.
 
 
 #my below
-protoc --proto_path=. *.proto --js_out=import_style=commonjs:.
+protoc -IPATH=$PROTO_DIR *.proto \
+    --js_out=import_style=commonjs:$OUT_DIR \
+    --grpc-web_out=import_style=commonjs,mode=grpcwebtext:$OUT_DIR
 
-protoc --proto_path=. *.proto --grpc-web_out=import_style=commonjs,mode=grpcwebtext:.
+
+#protoc --proto_path=. *.proto --js_out=import_style=commonjs:,mode=grpcwebtext:.
+#
+#protoc --proto_path=. *.proto --grpc-web_out=import_style=commonjs,mode=grpcwebtext:.
+
+#about:https://github.com/grpc/grpc-web#advanced-demo-browser-echo-app
