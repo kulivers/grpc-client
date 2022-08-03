@@ -1,12 +1,12 @@
 import {useEffect, useState} from 'react';
-import {CounterReply, CounterRequest, Empty} from '../protos/Counter/counter_pb'
+import {CounterRequest, Empty} from '../protos/Counter/counter_pb'
 import CounterClient from '../protos/Counter/counter_grpc_web_pb';
 
 
 export const UnaryCounter = () => {
     const [counter, setCounter] = useState([]);
     useEffect(() => {
-        fetchCounter()
+        // fetchCounter()
     }, [])
 
     const fetchCounter = async () => {
@@ -19,6 +19,7 @@ export const UnaryCounter = () => {
                     console.log(err.code);
                     console.log(err.message);
                 } else {
+                    console.log('getCounter response.array: ', response.array)
                     setCounter(response.array)
                 }
             })

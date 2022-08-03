@@ -20,14 +20,12 @@ proto.greet = require('./greet_pb.js');
 
 /**
  * @param {string} hostname
- * @param {?Object} credentials
- * @param {?grpc.web.ClientOptions} options
  * @constructor
  * @struct
  * @final
  */
 proto.greet.GreeterClient =
-    function(hostname, credentials, options) {
+    function (hostname) {
   if (!options) options = {};
   options.format = 'text';
 

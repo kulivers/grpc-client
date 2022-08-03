@@ -1,4 +1,4 @@
-// source: PATH/counter.proto
+// source: PATH/test.proto
 /**
  * @fileoverview
  * @enhanceable

@@ -3,10 +3,13 @@ import {Empty} from '../protos/Counter/counter_pb';
 
 
 var streamingCall = null;
-const streamRequest = async () => {
+const countDownStreamRequest = async () => {
     if (!streamingCall) {
         let emptyRequest = new Empty();
         const counterClient = new CounterClient('https://localhost:7064');
+
+        console.log('client')
+
         streamingCall = counterClient.countdown(emptyRequest, {})
 
         streamingCall.on('data', (response) => {
@@ -28,11 +31,18 @@ const streamRequest = async () => {
 }
 
 
-export function SteamRequest() {
+export function CountDownStream() {
+    function subscribeToServerMessage() {
+        let emptyRequest = new Empty();
+        const counterClient = new CounterClient('https://localhost:7064');
+        console.log('client', counterClient)
 
+
+    }
 
     return (<div>
-        <h1>my stream</h1>
-        <button onClick={() => streamRequest()}>make stream request</button>
+        <h1>stream countdown</h1>
+        <button onClick={() => countDownStreamRequest()}>Toggle counter countdown</button>
+        <button onClick={() => subscribeToServerMessage()}>subscribeToServerMessage</button>
     </div>)
 }

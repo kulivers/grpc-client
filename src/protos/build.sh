@@ -23,3 +23,8 @@ protoc -IPATH=$PROTO_DIR *.proto \
 #protoc --proto_path=. *.proto --grpc-web_out=import_style=commonjs,mode=grpcwebtext:.
 
 #about:https://github.com/grpc/grpc-web#advanced-demo-browser-echo-app
+
+
+
+# ниже - это для json
+#D:\Playground\test-react-grpc-proj\src\protos>pbjs -t json greet.proto > greet.json
