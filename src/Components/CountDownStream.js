@@ -6,7 +6,7 @@ var streamingCall = null;
 const countDownStreamRequest = async () => {
     if (!streamingCall) {
         let emptyRequest = new Empty();
-        const counterClient = new CounterClient('https://localhost:7064');
+        const counterClient = new CounterClient('https://localhost:7064', null, null);
 
         console.log('client')
 
@@ -32,17 +32,8 @@ const countDownStreamRequest = async () => {
 
 
 export function CountDownStream() {
-    function subscribeToServerMessage() {
-        let emptyRequest = new Empty();
-        const counterClient = new CounterClient('https://localhost:7064');
-        console.log('client', counterClient)
-
-
-    }
-
     return (<div>
         <h1>stream countdown</h1>
         <button onClick={() => countDownStreamRequest()}>Toggle counter countdown</button>
-        <button onClick={() => subscribeToServerMessage()}>subscribeToServerMessage</button>
     </div>)
 }

@@ -1,44 +1,45 @@
-import protobuf from 'protobufjs';
-import greeterDescriptor from './protos/Greeter/greet.json';
-import {toUTF8Array} from './Helpers/ToUTF8Array';
+import protobuf from 'protobufjs'
 import {CountDownStream} from './Components/CountDownStream';
 import {UnaryCounter} from './Components/UnaryCounter';
-import {StreamRequestClgButton} from './Components/StreamRequestClgButton';
 import {frameRequest} from './Helpers/FrameRequest';
+import {CounterClient} from './protos/Counter/counter_grpc_web_pb';
+import {CounterRequest, Empty} from '../src/protos/Counter/counter_pb';
+import counterJSONDescriptor from '../src/protos/Counter/counter.json'
 
+const MakeXHRGrpcRequest = (url, data) => {
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true)
+    xhr.setRequestHeader('accept', 'application/grpc-web-text')
+    xhr.setRequestHeader('content-type', 'application/grpc-web-text')
+    xhr.setRequestHeader('x-grpc-web', 1)
+    xhr.setRequestHeader('x-user-agent', 'grpc-web-javascript/0.1')
+    xhr.send(data)
+    xhr.onload = function () {
+        if (xhr.status !== 200) { // анализируем HTTP-статус ответа, если статус не 200, то произошла ошибка
+            alert(`Ошибка ${xhr.status}: ${xhr.statusText}`); // Например, 404: Not Found
+        } else { // если всё прошло гладко, выводим результат
+
+            console.log('xhr response ', xhr)
+        }
+    }
+}
 
 function sayHelloRequest() {
-    let BASE_URL = 'https://localhost:7064'
-    const serviceName = 'greet.Greeter'
-    const methodName = 'SayHello'
-    const root = protobuf.Root.fromJSON(greeterDescriptor);
-    const Greeter = root.lookup('Greeter')
-    var greeter = Greeter.create(/* see above */ rpcImpl, /* request delimited? */ false, /* response delimited? */ false);
-    console.log(greeter)
-    greeter.sayHello({ name: 'EGA ETA YA' }, function(err, response) {
-        console.log('Greeting: ', response);
-    });
+    const counterClient = new CounterClient('https://localhost:7064', null, null);
+    let emptyGen = new Empty();
+    let serializedEmptyGen = emptyGen.serializeBinary()
+    var root = protobuf.Root.fromJSON(counterJSONDescriptor);
+    var CounterRequestJSON = root.lookup('CounterRequest')
+    var encodedEmptyReq = CounterRequestJSON.encode({}).finish();
+    var encodedCounterReq = CounterRequestJSON.encode({count: 321}).finish();
+    var counterRequest = new CounterRequest()
+    counterRequest.setCount(2131)
+
+    var data = Uint8Array.from([65, 65, 65, 65, 65, 65, 65, 61])
+    let url = 'https://localhost:7064/count.Counter/GetCounter'
+    MakeXHRGrpcRequest(url, data)
 
 
-    // fetch(`${BASE_URL}/${serviceName}/${methodName}`, {
-    //     method: 'POST',
-    //     mode: 'cors',
-    //     cache: 'no-cache',
-    //     headers: {
-    //         'Content-Type': 'application/grpc-web-text',
-    //         'X-Accept-Content-Transfer-Encoding': 'base64',
-    //         'accept': 'application/grpc-web',
-    //     },
-    //     body: {name: 'EGA'},
-    // }).then(async response => {
-    //     const reader = response.body.getReader();
-    //     while(true) {
-    //         const {done, value} = await reader.read();
-    //         console.log(`Получено ${value}`)
-    //         if (done) {
-    //             break;
-    //         }
-    //     }})
 }
 
 function App() {
@@ -58,39 +59,28 @@ function App() {
             <hr/>
             <hr/>
             <hr/>
-            <StreamRequestClgButton/>
+
             <hr/>
             <br/>
 
             <button onClick={() => {
                 sayHelloRequest()
             }}>
-                sayHelloRequest            </button>
+                get counter by fetch
+            </button>
             <hr style={{backgroundColor: 'blue', border: '3px solid blue', width: '100%'}}/>
+            <hr style={{backgroundColor: 'blue', border: '3px solid blue', width: '100%'}}/>
+            <hr style={{backgroundColor: 'blue', border: '3px solid blue', width: '100%'}}/>
+            <button onClick={()=>{
+                var root = protobuf.Root.fromJSON(counterJSONDescriptor);
+                var CounterReply = root.lookup('CounterReply')
+                var decoded = CounterReply.decode(xhr.response)
+                console.log('decoded', decoded)
+
+
+            }}>lil test button </button>
 
         </div>
     );
 }
-
-function rpcImpl(method, requestData, callback) {
-    // console.log(method)
-    // console.log(requestData)
-    // console.log(callback)
-
-    let BASE_URL = 'https://localhost:7064'
-    const serviceName = 'greet.Greeter'
-    const methodName = 'SayHello'
-    return async (method, requestData, callback) => {
-        const request = await fetch(`${BASE_URL}/${serviceName}/${methodName}`, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/grpc-web+proto',
-                'x-grpc-web': '1',
-            },
-            body: frameRequest(requestData),
-        });
-        console.log(request)
-    };
-}
-
 export default App;
