@@ -1,11 +1,10 @@
+import jspb from 'google-protobuf'
 import protobuf from 'protobufjs'
 import {CountDownStream} from './Components/CountDownStream';
 import {UnaryCounter} from './Components/UnaryCounter';
-import {frameRequest} from './Helpers/FrameRequest';
-import {CounterClient} from './protos/Counter/counter_grpc_web_pb';
-import {CounterRequest, Empty} from '../src/protos/Counter/counter_pb';
 import counterJSONDescriptor from '../src/protos/Counter/counter.json'
-
+import {base64_decode} from './Helpers/base64Helper';
+import {CounterReply} from '../src/protos/Counter/counter_pb'
 const MakeXHRGrpcRequest = (url, data) => {
     let xhr = new XMLHttpRequest();
     xhr.open('POST', url, true)
@@ -14,28 +13,32 @@ const MakeXHRGrpcRequest = (url, data) => {
     xhr.setRequestHeader('x-grpc-web', 1)
     xhr.setRequestHeader('x-user-agent', 'grpc-web-javascript/0.1')
     xhr.send(data)
+
+
     xhr.onload = function () {
         if (xhr.status !== 200) { // анализируем HTTP-статус ответа, если статус не 200, то произошла ошибка
             alert(`Ошибка ${xhr.status}: ${xhr.statusText}`); // Например, 404: Not Found
         } else { // если всё прошло гладко, выводим результат
-
-            console.log('xhr response ', xhr)
+            var root = protobuf.Root.fromJSON(counterJSONDescriptor);
+            var CounterReply = root.lookup('CounterReply')
+            var bytes = base64_decode(xhr.response)
+            var result = CounterReply.decode(new Uint8Array(bytes))
+            console.log(result)
         }
     }
 }
 
-function sayHelloRequest() {
-    const counterClient = new CounterClient('https://localhost:7064', null, null);
-    let emptyGen = new Empty();
-    let serializedEmptyGen = emptyGen.serializeBinary()
-    var root = protobuf.Root.fromJSON(counterJSONDescriptor);
-    var CounterRequestJSON = root.lookup('CounterRequest')
-    var encodedEmptyReq = CounterRequestJSON.encode({}).finish();
-    var encodedCounterReq = CounterRequestJSON.encode({count: 321}).finish();
-    var counterRequest = new CounterRequest()
-    counterRequest.setCount(2131)
-
-    var data = Uint8Array.from([65, 65, 65, 65, 65, 65, 65, 61])
+function makeCounterRequest() {
+    // const counterClient = new CounterClient('https://localhost:7064', null, null);
+    // let serializedEmptyGen = emptyGen.serializeBinary()
+    // var encodedEmptyReq = CounterRequestJSON.encode({}).finish();
+    // var encodedCounterReq = CounterRequestJSON.encode({count: 321}).finish();
+    // let emptyGen = new Empty();
+    // var CounterRequestJSON = root.lookup('CounterRequest')
+    // var root = protobuf.Root.fromJSON(counterJSONDescriptor);
+    // let counterRequest = new CounterRequest();
+    // counterRequest.setCount(2131)
+    let data = Uint8Array.from([65, 65, 65, 65, 65, 65, 65, 61]);
     let url = 'https://localhost:7064/count.Counter/GetCounter'
     MakeXHRGrpcRequest(url, data)
 
@@ -64,23 +67,34 @@ function App() {
             <br/>
 
             <button onClick={() => {
-                sayHelloRequest()
+                makeCounterRequest()
             }}>
-                get counter by fetch
+                get counter request
             </button>
             <hr style={{backgroundColor: 'blue', border: '3px solid blue', width: '100%'}}/>
-            <hr style={{backgroundColor: 'blue', border: '3px solid blue', width: '100%'}}/>
-            <hr style={{backgroundColor: 'blue', border: '3px solid blue', width: '100%'}}/>
+            <button onClick={() => {
+                var counter = new CounterReply();
+                counter.setCurcounter(20)
+                console.log(counter.getCurcounter())
+
+
+                // counter.serializeBinary() internally
+                var writer = new jspb.BinaryWriter();
+                var f = undefined;
+                f = 20; //getCounter
+                writer.writeInt32(1,f)
+                var buffer =  writer.getResultBuffer(); // 8 20, equal to counter.serializeBinary()
+
+
+            }}>lil debug button
+            </button>
+            <br/>
             <button onClick={()=>{
-                var root = protobuf.Root.fromJSON(counterJSONDescriptor);
-                var CounterReply = root.lookup('CounterReply')
-                var decoded = CounterReply.decode(xhr.response)
-                console.log('decoded', decoded)
 
 
-            }}>lil test button </button>
-
+            }}> make greet req</button>
         </div>
     );
 }
+
 export default App;

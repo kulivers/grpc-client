@@ -16,6 +16,7 @@
     "install": "^0.13.0",
     "minimist": "^1.2.6",
     "os-browserify": "^0.3.0",
+    "pbjs": "^0.0.14",
     "plugin": "^0.3.3",
     "protobufjs": "^7.0.0",
     "protobufjs-cli": "^1.0.0",
