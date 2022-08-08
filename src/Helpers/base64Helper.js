@@ -34,8 +34,9 @@ function arrayBufferToBase64(buffer) {
     }
     return btoa(binary);
 }
+
 function base64ToArrayBuffer(base64) {
-    var binary_string = window.atob(base64);
+    var binary_string = atob(base64);
     var len = binary_string.length;
     var bytes = new Uint8Array(len);
     for (var i = 0; i < len; i++) {
@@ -43,4 +44,37 @@ function base64ToArrayBuffer(base64) {
     }
     return bytes.buffer;
 }
-module.exports = {arrayBufferToBase64, base64_decode, base64ToArrayBuffer}
+
+function stringToArrayBuffer(str) {
+    function codePointAtPolyfill(str, index) {
+        let code = str.charCodeAt(index);
+        if (code >= 0xd800 && code <= 0xdbff) {
+            const surr = str.charCodeAt(index + 1);
+            if (surr >= 0xdc00 && surr <= 0xdfff) {
+                code = 0x10000 + ((code - 0xd800) << 10) + (surr - 0xdc00);
+            }
+        }
+        return code;
+    }
+
+    const asArray = new Uint8Array(str.length);
+    let arrayIndex = 0;
+    for (let i = 0; i < str.length; i++) {
+        const codePoint = (String.prototype).codePointAt ? (str).codePointAt(i) : codePointAtPolyfill(str, i);
+        asArray[arrayIndex++] = codePoint & 0xFF;
+    }
+    return asArray;
+}
+
+function getBinaryHex(grpcText) {
+    const buffers = [];
+    for (const text of grpcText) {
+        const buffer = Buffer.from(text, "base64");
+        const bufString = buffer.toString("hex");
+        buffers.push(bufString);
+    }
+    return buffers;
+}
+
+
+module.exports = {arrayBufferToBase64, base64_decode, base64ToArrayBuffer, stringToArrayBufferFROMLIB: stringToArrayBuffer, getBinaryHex}

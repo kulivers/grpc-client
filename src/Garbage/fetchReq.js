@@ -18,3 +18,11 @@
 //         }
 //     }
 // })
+
+
+const ChunkType = {
+    MESSAGE: 1,
+    TRAILERS: 2,
+}
+
+console.log(ChunkType.MESSAGE)
