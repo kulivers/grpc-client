@@ -56,19 +56,16 @@ function _base64ToArrayBuffer(base64) {
 
 
 var encoded = ''
-//                                                                                           //echo 080110c0071a052f74657374 | xxd -r -p | protoc --decode_raw
+//                                                                 //echo 080110c0071a052f74657374 | xxd -r -p | protoc --decode_raw   !!!!IN CMD!!!!
 var buffer = _base64ToArrayBuffer('AAAAAAwIARDABxoFL3Rlc3Q=') //  00       00 00 00 0c      080110c0071a052f74657374
-                                                                      // flag        length=12       grab next 12 bytes
-console.log(buffer)
+console.log(buffer)                                                  // flag        length=12       grab next 12 bytes
+
 
 
 encoded = 'AAAAAAIIFA==gAAAABBncnBjLXN0YXR1czogMA0K' // BAD
 buffer = _base64ToArrayBuffer(encoded)
-console.log(buffer)
+console.log(buffer) //0814 = 1: 20, works fine
 
-encoded = 'AAAAAAIIFA==' // BAD  SAME RESULT!!!!!! But is is valid
-buffer = _base64ToArrayBuffer(encoded) // 00        00 00 00 02     08 14
-console.log(buffer)                    // flag      len             bytes
 
 
 

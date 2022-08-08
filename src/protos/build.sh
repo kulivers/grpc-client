@@ -18,11 +18,9 @@ protoc -IPATH=$PROTO_DIR *.proto \
     --grpc-web_out=import_style=commonjs,mode=grpcwebtext:$OUT_DIR
 
 
-#protoc --proto_path=. *.proto --js_out=import_style=commonjs:,mode=grpcwebtext:.
-#
-#protoc --proto_path=. *.proto --grpc-web_out=import_style=commonjs,mode=grpcwebtext:.
+# protoc --proto_path=. --js_out=import_style=commonjs:. test1.proto
+#protoc --proto_path=. --grpc-web_out=import_style=commonjs,mode=grpcwebtext:. test1.proto
 
-#about:https://github.com/grpc/grpc-web#advanced-demo-browser-echo-app
 
 
 

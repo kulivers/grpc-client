@@ -4,7 +4,8 @@ import {CountDownStream} from './Components/CountDownStream';
 import {UnaryCounter} from './Components/UnaryCounter';
 import counterJSONDescriptor from '../src/protos/Counter/counter.json'
 import {base64_decode} from './Helpers/base64Helper';
-import {CounterReply} from '../src/protos/Counter/counter_pb'
+import {CounterReply, CounterRequest} from '../src/protos/Counter/counter_pb'
+
 const MakeXHRGrpcRequest = (url, data) => {
     let xhr = new XMLHttpRequest();
     xhr.open('POST', url, true)
@@ -22,8 +23,8 @@ const MakeXHRGrpcRequest = (url, data) => {
             var root = protobuf.Root.fromJSON(counterJSONDescriptor);
             var CounterReply = root.lookup('CounterReply')
             var bytes = base64_decode(xhr.response)
-            var result = CounterReply.decode(new Uint8Array(bytes))
-            console.log(result)
+            console.log()
+
         }
     }
 }
@@ -38,7 +39,7 @@ function makeCounterRequest() {
     // var root = protobuf.Root.fromJSON(counterJSONDescriptor);
     // let counterRequest = new CounterRequest();
     // counterRequest.setCount(2131)
-    let data = Uint8Array.from([65, 65, 65, 65, 65, 65, 65, 61]);
+    let data = Uint8Array.from([65, 65, 65, 65, 65, 65, 65, 61]); //'AAAAAAA='
     let url = 'https://localhost:7064/count.Counter/GetCounter'
     MakeXHRGrpcRequest(url, data)
 
@@ -73,26 +74,14 @@ function App() {
             </button>
             <hr style={{backgroundColor: 'blue', border: '3px solid blue', width: '100%'}}/>
             <button onClick={() => {
-                var counter = new CounterReply();
-                counter.setCurcounter(20)
-                console.log(counter.getCurcounter())
-
-
-                // counter.serializeBinary() internally
-                var writer = new jspb.BinaryWriter();
-                var f = undefined;
-                f = 20; //getCounter
-                writer.writeInt32(1,f)
-                var buffer =  writer.getResultBuffer(); // 8 20, equal to counter.serializeBinary()
-
+                var root = protobuf.Root.fromJSON(counterJSONDescriptor);
+                var CounterReply = root.lookup('CounterReply')
+                console.log(CounterReply.encode(123131).finish().buffer)
 
             }}>lil debug button
             </button>
+
             <br/>
-            <button onClick={()=>{
-
-
-            }}> make greet req</button>
         </div>
     );
 }
